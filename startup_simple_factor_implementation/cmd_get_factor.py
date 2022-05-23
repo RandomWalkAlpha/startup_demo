@@ -14,7 +14,7 @@ def past_n_days_return_std(daily_quotation_std: DataFrame, day: int) -> DataFram
     return n_days_return_std.dropna(axis=0, how='all')
 
 
-def get_daily_return_ranking(daily_quotation_std: DataFrame) -> DataFrame:
+def past_daily_return_ranking(daily_quotation_std: DataFrame) -> DataFrame:
     daily_return = past_n_days_return(daily_quotation_std, 1)
     ranking_data_frame = DataFrame(index=daily_return.index, columns=daily_return.columns)
     code_query = {v: k for k, v in enumerate(daily_return.columns)}
@@ -45,7 +45,7 @@ def main():
     print(past_50_day_std)
 
     # 计算 daily_ranking
-    daily_ranking = get_daily_return_ranking(load('S_DQ_CLOSE'))
+    daily_ranking = past_daily_return_ranking(load('S_DQ_CLOSE'))
     print(daily_ranking)
 
 
