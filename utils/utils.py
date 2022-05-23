@@ -8,14 +8,6 @@ def get_raw_table(file_path: str = '../../2015.parquet') -> DataFrame:
     return table
 
 
-def get_indicate_columns(columns=None) -> DataFrame:
-    if columns is None:
-        columns = []
-    df = get_raw_table()
-    base_columns = ['zs_trading_day', 'zs_code']
-    return df[base_columns + columns]
-
-
 def standardize(dataframe: DataFrame, index, columns=None, values=None, subset=None) -> DataFrame:
     if subset is None:
         subset = ['zs_trading_day', 'zs_code']
@@ -23,6 +15,11 @@ def standardize(dataframe: DataFrame, index, columns=None, values=None, subset=N
     trading_day_series = dataframe.copy()
     trading_day_series.loc[:, 'zs_trading_day'] = trading_day_series.loc[:, 'zs_trading_day'] * 10000 + 1600
     return trading_day_series.pivot(index=index, columns=columns, values=values)
+
+
+def load(column_name: str):
+    table = get_raw_table()
+    return standardize(table, index='zs_trading_day', columns='zs_code', values=column_name)
 
 
 def ranking(code_list: List[Tuple]) -> List[Tuple]:
