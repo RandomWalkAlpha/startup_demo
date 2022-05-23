@@ -16,7 +16,7 @@ def get_indicate_columns(columns=None) -> DataFrame:
     return df[base_columns + columns]
 
 
-def standardize(dataframe: DataFrame, index, columns, values, subset=None) -> DataFrame:
+def standardize(dataframe: DataFrame, index, columns=None, values=None, subset=None) -> DataFrame:
     if subset is None:
         subset = ['zs_trading_day', 'zs_code']
     dataframe = dataframe.drop_duplicates(subset=subset)
