@@ -16,7 +16,6 @@ func_dict = {
 def syntax_check(expression: str) -> bool:
     if expression is None:
         return True
-
     # 验证函数名称是否有效
     func = expression[: expression.find('(')]
     assert func in func_dict, f"'{func}' is an invalid function."
