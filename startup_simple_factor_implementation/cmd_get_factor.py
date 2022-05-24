@@ -1,17 +1,17 @@
 import numpy as np
-
-from utils.utils import *
+from pandas import DataFrame
+from utils.utils import load, ranking
 
 
 def past_n_days_return(daily_quotation_std: DataFrame, day: int) -> DataFrame:
     n_days_return = (daily_quotation_std - daily_quotation_std.shift(day)) / daily_quotation_std.shift(day)
-    return n_days_return.dropna(axis=0, how='all')
+    return n_days_return
 
 
 def past_n_days_return_std(daily_quotation_std: DataFrame, day: int) -> DataFrame:
     pivot_daily_quotation = past_n_days_return(daily_quotation_std, day)
     n_days_return_std = pivot_daily_quotation.rolling(day).std()
-    return n_days_return_std.dropna(axis=0, how='all')
+    return n_days_return_std
 
 
 def past_daily_return_ranking(daily_quotation_std: DataFrame) -> DataFrame:
@@ -34,15 +34,15 @@ def past_daily_return_ranking(daily_quotation_std: DataFrame) -> DataFrame:
 def main():
     # 计算 1_day_return
     past_1_day_return = past_n_days_return(load('S_DQ_CLOSE'), 1)
-    print(past_1_day_return)
+    print(past_1_day_return.dropna(axis=0, how='all'))
 
     # 计算 10_day_return
     past_10_day_return = past_n_days_return(load('S_DQ_CLOSE'), 10)
-    print(past_10_day_return)
+    print(past_10_day_return.dropna(axis=0, how='all'))
 
     # 计算 50_day_std
     past_50_day_std = past_n_days_return_std(load('S_DQ_CLOSE'), 50)
-    print(past_50_day_std)
+    print(past_50_day_std.dropna(axis=0, how='all'))
 
     # 计算 daily_ranking
     daily_ranking = past_daily_return_ranking(load('S_DQ_CLOSE'))

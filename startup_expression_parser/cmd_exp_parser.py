@@ -1,8 +1,11 @@
-import sys
-sys.path.append('../../startup_demo/')
+import click
+from pandas import DataFrame
+from utils.utils import load
 
-import argparse
-from startup_simple_factor_implementation.cmd_get_factor import *
+from startup_simple_factor_implementation.cmd_get_factor import \
+    past_n_days_return,\
+    past_n_days_return_std,\
+    past_daily_return_ranking
 
 
 func_dict = {
@@ -13,42 +16,21 @@ func_dict = {
 }
 
 
-def syntax_check(expression: str) -> bool:
-    if expression is None:
-        return True
-    # 验证函数名称是否有效
-    func = expression[: expression.find('(')]
-    assert func in func_dict, f"'{func}' is an invalid function."
-    # 验证其参数列表
-    next_exp_l = expression.find('(') + 1
-    next_exp_r = expression.rfind(')')
-    param_list = expression[next_exp_l: next_exp_r].split(',')
-    assert len(param_list) == len(func_dict[func].split(',')), "Illegal parameter(s)"
-    # 若参数包含函数，递归验证
-    for arg in param_list:
-        if '(' in arg:
-            if syntax_check(arg):
-                continue
-    return True
-
-
 def expression_parser(expression: str) -> DataFrame:
-    assert syntax_check(expression) is True, "Illegal expression."
     data = eval(expression)
     return data
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('expression', help='因子计算表达式', type=str)
-    args = parser.parse_args()
-    require = expression_parser(args.expression)
-    print(require)
+@click.command()
+@click.argument('expression')
+def main(expression):
+    require = expression_parser(expression)
+    print(require.dropna(axis=0, how='all'))
 
 
-# python .\cmd_exp_parser.py past_n_days_return(load('S_DQ_CLOSE'),1)
-# python .\cmd_exp_parser.py past_n_days_return(load('S_DQ_CLOSE'),10)
-# python .\cmd_exp_parser.py past_n_days_return_std(load('S_DQ_CLOSE'),50)
-# python .\cmd_exp_parser.py past_daily_return_ranking(load('S_DQ_CLOSE'))
+# python cmd_exp_parser.py past_n_days_return(load('S_DQ_CLOSE'),1)
+# python cmd_exp_parser.py past_n_days_return(load('S_DQ_CLOSE'),10)
+# python cmd_exp_parser.py past_n_days_return_std(load('S_DQ_CLOSE'),50)
+# python cmd_exp_parser.py past_daily_return_ranking(load('S_DQ_CLOSE'))
 if __name__ == '__main__':
     main()
